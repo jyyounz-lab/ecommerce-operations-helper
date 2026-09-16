@@ -1,4 +1,4 @@
-import {APP_VERSION,calculators,evaluate,number} from './calculators.js';
+import {APP_VERSION,calculators,evaluate,number} from './calculators.js?v=2.0.1';
 const $=s=>document.querySelector(s),KEY='ecommerce-helper:v2',LEGACY_KEY='ecommerce-helper:v1';
 const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const defaults=c=>Object.fromEntries(c.fields.map(f=>[f.id,String(f.defaultValue)]));
@@ -86,5 +86,5 @@ $('#install-button').onclick=async()=>{if(!installPrompt)return;await installPro
 let offlineReady=false;
 function network(){ $('#network').textContent=offlineReady?(navigator.onLine?'● 離線資源已就緒':'● 目前離線 · 可繼續試算'):(navigator.onLine?'○ 線上使用 · 離線資源未就緒':'○ 目前離線 · 快取未確認'); }
 window.addEventListener('online',network);window.addEventListener('offline',network);
-async function prepareOffline(){try{if(!('serviceWorker' in navigator))return;await navigator.serviceWorker.register('./sw.js');await navigator.serviceWorker.ready;const cache=await caches.open(`ecommerce-helper-v${APP_VERSION}`);offlineReady=Boolean(await cache.match('./app.js'));network();}catch{network();}}
+async function prepareOffline(){try{if(!('serviceWorker' in navigator))return;await navigator.serviceWorker.register('./sw.js');await navigator.serviceWorker.ready;const cache=await caches.open(`ecommerce-helper-v${APP_VERSION}`);offlineReady=Boolean(await cache.match('./app.js?v=2.0.1'));network();}catch{network();}}
 $('#version').textContent=`v${APP_VERSION}`;render();storageStatus();network();prepareOffline();

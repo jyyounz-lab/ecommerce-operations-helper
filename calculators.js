@@ -1,4 +1,4 @@
-export const APP_VERSION='2.0.0';
+export const APP_VERSION='2.0.1';
 export const number=v=>new Intl.NumberFormat('zh-TW',{maximumFractionDigits:2}).format(v);
 export const money=v=>`NT$${number(v)}`;
 export const percent=v=>`${number(v*100)}%`;
