@@ -1,8 +1,32 @@
 import assert from "node:assert/strict";
 import { calculators, evaluate } from "./calculators.js";
-const cases = [[{ price: 1000, cost: 650 }, .35], [{ purchase: 650, margin: 35 }, 1000], [{ price: 1000, margin: 35 }, 650], [{ fixedCost: 100000, margin: 35 }, 285714.28571428574], [{ targetProfit: 200000, fixedCost: 100000, margin: 35 }, 857142.8571428572], [{ impressions: 100000, clickRate: 2, conversionRate: 3, orderValue: 1200 }, 72000]];
-cases.forEach(([input, expected], index) => assert.ok(Math.abs(evaluate(calculators[index], input).result - expected) < 1e-8));
+const defaults=c=>Object.fromEntries(c.fields.map(f=>[f.id,f.defaultValue]));
+const expected=[.35,1000,650,285714.28571428574,857142.8571428572,72000,80,-10,4.8];
+let checks=0;
+calculators.forEach((c,i)=>{const e=evaluate(c,defaults(c));assert.ok(Math.abs(e.result-expected[i])<1e-8,c.id);assert.ok(c.substitute(e.values));assert.ok(c.formulaText);checks+=3;
+ for(const f of c.fields){for(const invalid of ['',null,undefined,-1,'abc',Infinity,1e13]){assert.equal(evaluate(c,{...defaults(c),[f.id]:invalid}).result,null,`${c.id}/${f.id}/${invalid}`);checks++;}
+ if(f.rate){assert.equal(evaluate(c,{...defaults(c),[f.id]:101}).result,null);checks++;}}
+});
 assert.equal(evaluate(calculators[0], { price: 0, cost: 0 }).result, null);
 assert.equal(evaluate(calculators[1], { purchase: 100, margin: 100 }).result, null);
 assert.equal(evaluate(calculators[5], { impressions: -1, clickRate: 2, conversionRate: 3, orderValue: 100 }).result, null);
-console.log("All calculator checks passed.");
+const check=(id,patch,value)=>{const c=calculators.find(c=>c.id===id);assert.equal(evaluate(c,{...defaults(c),...patch}).result,value);checks++;};
+check('forecast',{clickRate:100,conversionRate:100},120000000);
+check('forecast',{impressions:0},0);
+check('gross-margin',{price:100,cost:150},-.5);
+check('gross-margin',{price:0},null);
+check('pricing',{margin:100},null);
+check('pricing',{margin:0},650);
+check('pricing',{purchase:650.5,margin:50},1301);
+check('break-even',{margin:0},null);
+check('break-even',{days:0},null);
+check('break-even',{orderValue:0},null);
+check('discount',{coupon:1000},null);
+check('discount',{platform:98,payment:2},null);
+check('discount',{saleRate:100},80);
+check('roas',{spend:0},null);
+check('roas',{margin:0},null);
+check('pricing',{purchase:1e12,margin:99.99999999999999},null);
+const be=calculators.find(c=>c.id==='break-even'),e=evaluate(be,defaults(be));
+assert.deepEqual(be.details(e.values,e.result).map(x=>x.value),['286 筆','10 筆']);checks++;
+console.log(`${checks+3} calculator checks passed; original six examples and three new tools verified.`);

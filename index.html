@@ -1,70 +1,24 @@
 <!doctype html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#146c5a">
-  <meta name="description" content="六項電商營運公式，快速試算毛利、定價、損益兩平與預估業績。">
-  <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="icon" href="./icon.svg" type="image/svg+xml">
-  <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./styles.css">
-  <title>電商營運計算助手</title>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+ <meta name="theme-color" content="#176451"><meta name="description" content="電商營運計算助手：九項即時計算、公式代入與本機方案比較。">
+ <link rel="icon" href="./icon.svg"><link rel="apple-touch-icon" href="./icon-192.png"><link rel="manifest" href="./manifest.webmanifest"><link rel="stylesheet" href="./styles.css">
+ <title>電商營運計算助手</title>
 </head>
 <body>
-  <header class="app-header">
-    <div class="header-inner">
-      <div class="brand-mark" aria-hidden="true">營</div>
-      <div class="brand-copy">
-        <p class="eyebrow">ECOMMERCE TOOLKIT</p>
-        <h1>電商營運計算助手</h1>
-      </div>
-      <span class="network-status" id="network-status" role="status"><i></i><span>可離線使用</span></span>
-    </div>
-  </header>
-
-  <main>
-    <section class="intro" aria-labelledby="intro-title">
-      <div>
-        <p class="section-kicker">把複雜公式，變成清楚答案</p>
-        <h2 id="intro-title">輸入數字，立即掌握營運關鍵。</h2>
-        <p>資料只留在這台裝置，不會上傳。選擇一項工具開始試算。</p>
-      </div>
-      <button class="install-button" id="install-button" hidden>安裝到手機</button>
-    </section>
-
-    <nav class="tool-nav" id="tool-nav" aria-label="計算工具捷徑"></nav>
-
-    <section class="workspace" aria-labelledby="workspace-title">
-      <div class="section-heading">
-        <div>
-          <p class="section-kicker">六大營運公式</p>
-          <h2 id="workspace-title">開始試算</h2>
-        </div>
-        <div class="actions">
-          <button class="text-button" id="reset-button">恢復範例值</button>
-          <button class="text-button danger" id="clear-button">全部清除</button>
-        </div>
-      </div>
-      <div class="calculators" id="calculators"></div>
-    </section>
-
-    <section class="future-section" aria-labelledby="future-title">
-      <span class="future-index">07+</span>
-      <div>
-        <p class="section-kicker">持續擴充</p>
-        <h2 id="future-title">更多營運工具，從這裡長出來。</h2>
-        <p>未來可加入廣告投報率、庫存週轉、平台抽成與多組商品比較。</p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <p>電商營運計算助手</p>
-    <p>版本 <span id="version">1.0.0</span> · 所有計算皆在裝置端完成</p>
-  </footer>
-
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script type="module" src="./app.js"></script>
-</body>
-</html>
+ <a class="skip" href="#workspace">跳到計算區</a>
+ <header><div class="header-inner"><div class="brand-mark" aria-hidden="true">營</div><div class="brand"><h1>電商營運計算助手</h1><p>PWA <span>· 可離線使用</span></p></div><button id="settings-button" class="quiet">使用說明</button></div></header>
+ <main>
+  <div class="intro"><div><p class="eyebrow">你的日常營運工作台</p><h2>每個決定，都算清楚。</h2></div><button id="library-button" class="secondary">已存方案 <span id="saved-count">0</span></button></div>
+  <nav class="groups" id="groups" aria-label="工具分類"></nav>
+  <nav class="tools" id="tools" aria-label="選擇計算工具"></nav>
+  <section id="workspace" tabindex="-1" aria-labelledby="calc-title"></section>
+  <footer><span id="network" role="status">正在準備離線資源…</span><span id="storage-status">資料只存本機 · 不上傳</span><span id="version"></span></footer>
+ </main>
+ <dialog id="library"><div class="dialog-head"><div><p class="eyebrow">本機儲存</p><h2>我的試算方案</h2></div><button data-close="library" aria-label="關閉方案" class="quiet">關閉</button></div><p class="muted">選取同一工具的 2–3 組方案，即可比較。載入後修改數值，再另存即可複製方案。</p><div id="records"></div><button id="compare-button" class="primary">比較勾選方案</button><div id="comparison" aria-live="polite"></div></dialog>
+  <dialog id="settings"><div class="dialog-head"><h2>使用與安裝</h2><button data-close="settings" class="quiet">關閉</button></div><h3>公式怎麼看？</h3><p>公式保持展開；代入過程與結果會隨輸入即時更新。百分比欄位輸入 35，即代表 35%。顯示金額四捨五入至小數兩位，內部計算保留精度。</p><h3>安裝到主畫面</h3><p>iPhone：用 Safari 開啟網址，點「分享」→「加入主畫面」。Android：用 Chrome 選單的「安裝應用程式」或「新增至主畫面」。</p><button id="install-button" class="primary" hidden>安裝應用程式</button><p class="muted">請先確認頁尾顯示「離線資源已就緒」，再將工具安裝到手機。第一次載入新版時需要網路，之後即可離線試算。</p><h3>資料與隱私</h3><p>輸入與方案只存於此瀏覽器。清除網站資料或更換裝置會遺失；費率由你自行填寫，不會自動更新平台規則。</p><button id="clear-all" class="danger">清除全部輸入與方案</button></dialog>
+ <dialog id="confirm"><h2 id="confirm-title">確認清除？</h2><p id="confirm-text"></p><div class="actions"><button id="confirm-cancel" class="secondary">取消</button><button id="confirm-ok" class="danger">確定清除</button></div></dialog>
+ <div id="toast" role="status" aria-live="polite"></div>
+ <script type="module" src="./app.js"></script>
+</body></html>
